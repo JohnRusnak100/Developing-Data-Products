@@ -1,0 +1,57 @@
+Midwest Education
+========================================================
+author: John Rusnak
+date: December 8, 2016
+height:800
+width:1600
+
+Introduction
+========================================================
+Education levels continue to be an area of much discussion in the US. We need to 
+continue to increase the levels of college graduates to remain innovative and 
+competitive in the global economy.
+
+This Shiny app uses the midwest data set to 
+analyze and identify areas of opportunity by county within a state. Educators and 
+advocates can then develop plans to address this issue.
+
+Running the App
+========================================================
+1. User selects the desired state to review from the drop down box
+2. User selects which variable to sort by(descending), user can change after output
+3. User clicks on the submit button
+4. Output includes both an interactive scatter plot(plotly) and a sortable table(gvistable) for counties with populations greater than 100,000
+
+View of Data used in App. 
+========================================================
+View of data used in App after user selections and filtering and sorting occurs. This data will be used to create the scatter plot and table in the output. For this example state=Illinois and sort variable = College. 
+
+```{r table,echo=FALSE}
+library(dplyr)
+library(googleVis)
+library(webshot)
+library(ggplot2)
+data(midwest)
+sort='College'
+plot<-midwest[,c(2,3,5,18,19)]
+plot$perchsd<-round(plot$perchsd,2)
+plot$percollege<-round(plot$percollege,2)
+names(plot)<-c('County','State','Population','HighSchool','College')
+plot<-plot[plot$State=='IL'& plot$Population > 100000,]
+plot<-eval(substitute(arrange(plot,desc(sort)), list(sort=as.name(sort)))) %>% mutate(Rank=rownames(plot)) %>% select(Rank,State,County,Population,HighSchool,College)
+
+plot<-as.data.frame(plot,row.names=NULL)
+
+```
+```{r data view,echo=FALSE,out.width=20}
+head(plot,n=5)
+
+```
+App location and source of Shiny App R files
+===========================================================
+
+Give it a test run at <a href="https://jrusnak100.shinyapps.io/MidwestEducation/" target="_blank">MidwestEducation</a>
+
+App files (ui.R and server.R) can be found at <a href="https://github.com/JohnRusnak100/Developing-Data-Products" target="_blank">Github</a>
+
+ 
